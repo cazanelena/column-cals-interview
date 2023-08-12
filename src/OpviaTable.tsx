@@ -1,23 +1,20 @@
 import * as React from 'react';
 
 import { Column, EditableCell2, Table2 } from '@blueprintjs/table';
-import { dummyTableData } from './data/dummyData';
+import { betterTableData } from './data/dummyData';
+import { CalculateAggregateDialog } from './CalculateAggregateDialog';
 
 const columns = [
-  { columnName: 'Time', columnType: 'time', columnId: 'time_col' },
-  { columnName: 'Cell Density', columnType: 'data', columnId: 'var_col_1' },
-  { columnName: 'Volume', columnType: 'data', columnId: 'var_col_2' },
+  { columnName: 'Time', columnType: 'time', columnId: 'time' },
+  { columnName: 'Cell Density', columnType: 'data', columnId: 'cell-density' },
+  { columnName: 'Volume', columnType: 'data', columnId: 'volume' },
 ];
 
 const OpviaTable: React.FC = () => {
-  const getSparseRefFromIndexes = (
-    rowIndex: number,
-    columnIndex: number
-  ): string => `${columnIndex}-${rowIndex}`;
-
   const cellRenderer = (rowIndex: number, columnIndex: number) => {
-    const sparsePosition = getSparseRefFromIndexes(rowIndex, columnIndex);
-    const value = dummyTableData[sparsePosition];
+    const columnName = columns[columnIndex].columnId;
+
+    const value = betterTableData[columnName][rowIndex];
     return <EditableCell2 value={String(value)} />;
   };
 
@@ -29,10 +26,31 @@ const OpviaTable: React.FC = () => {
     />
   ));
 
+  const calculateAggegate = (func: string, columnName: string) => {
+    const data = betterTableData[columnName] as number[];
+    switch (func) {
+      case 'sum':
+        return data.reduce((curr: number, acc) => curr + acc, 0);
+      case 'max':
+        return Math.max(...data);
+      case 'min':
+        return Math.min(...data);
+      case 'average':
+        return data.reduce((curr: number, acc) => curr + acc, 0) / data.length;
+    }
+  };
+
+  const onCalculate = (func: string, col: string) => {
+    console.log(calculateAggegate(func, col));
+  };
+
   return (
-    <Table2 defaultRowHeight={30} numRows={8}>
-      {cols}
-    </Table2>
+    <div>
+      <Table2 defaultRowHeight={30} numRows={8}>
+        {cols}
+      </Table2>
+      <CalculateAggregateDialog onCalculate={onCalculate} />
+    </div>
   );
 };
 
