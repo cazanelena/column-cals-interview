@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 
 import { Column, EditableCell2, Table2 } from '@blueprintjs/table';
 import { betterTableData } from './data/dummyData';
@@ -11,9 +12,10 @@ const columns = [
 ];
 
 const OpviaTable: React.FC = () => {
+  const [aggregates, setAggregates] = useState<string[]>([]);
+
   const cellRenderer = (rowIndex: number, columnIndex: number) => {
     const columnName = columns[columnIndex].columnId;
-
     const value = betterTableData[columnName][rowIndex];
     return <EditableCell2 value={String(value)} />;
   };
@@ -42,6 +44,9 @@ const OpviaTable: React.FC = () => {
 
   const onCalculate = (func: string, col: string) => {
     console.log(calculateAggegate(func, col));
+    const result = calculateAggegate(func, col);
+    const aggregateText = `The ${func} of ${col} is ${result}`;
+    setAggregates([...aggregates, aggregateText]);
   };
 
   return (
@@ -50,6 +55,9 @@ const OpviaTable: React.FC = () => {
         {cols}
       </Table2>
       <CalculateAggregateDialog onCalculate={onCalculate} />
+      {aggregates.map((aggregateText) => (
+        <div key={aggregateText}>{aggregateText}</div>
+      ))}
     </div>
   );
 };
