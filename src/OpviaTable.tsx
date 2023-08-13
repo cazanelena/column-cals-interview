@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import { Column, EditableCell2, Table2 } from '@blueprintjs/table';
+import { Column, Cell, EditableCell2, Table2 } from '@blueprintjs/table';
 import { betterTableData } from './data/dummyData';
 import { CalculateAggregateDialog } from './CalculateAggregateDialog';
 
@@ -12,12 +12,25 @@ const columns = [
 ];
 
 const OpviaTable: React.FC = () => {
-  const [aggregates, setAggregates] = useState<string[]>([]);
+  // const [aggregates, setAggregates] = useState<string[]>([]);
+  const [aggregateResults, setAggregateResults] = useState<
+    Array<{ function: string; column: string; result: number }>
+  >([]);
 
   const cellRenderer = (rowIndex: number, columnIndex: number) => {
     const columnName = columns[columnIndex].columnId;
     const value = betterTableData[columnName][rowIndex];
     return <EditableCell2 value={String(value)} />;
+  };
+
+  const resultCellRenderer = (rowIndex: number, columnIndex: number) => {
+    if (columnIndex === 0) {
+      const formattedValue = `${aggregateResults[rowIndex].function}/${aggregateResults[rowIndex].column}`;
+      return <Cell>{formattedValue}</Cell>;
+    } else if (columnIndex === 1) {
+      return <Cell>{aggregateResults[rowIndex].result}</Cell>;
+    }
+    return <Cell>-</Cell>;
   };
 
   const cols = columns.map((column) => (
@@ -43,10 +56,10 @@ const OpviaTable: React.FC = () => {
   };
 
   const onCalculate = (func: string, col: string) => {
-    console.log(calculateAggegate(func, col));
-    const result = calculateAggegate(func, col);
-    const aggregateText = `The ${func} of ${col} is ${result}`;
-    setAggregates([...aggregates, aggregateText]);
+    const result = calculateAggegate(func, col) || 0; // Use 0 as a default value if the result is undefined
+    const newResult = { function: func, column: col, result: result };
+
+    setAggregateResults([...aggregateResults, newResult]);
   };
 
   return (
@@ -55,9 +68,11 @@ const OpviaTable: React.FC = () => {
         {cols}
       </Table2>
       <CalculateAggregateDialog onCalculate={onCalculate} />
-      {aggregates.map((aggregateText) => (
-        <div key={aggregateText}>{aggregateText}</div>
-      ))}
+
+      <Table2 numRows={aggregateResults.length}>
+        <Column name="Function/Column" cellRenderer={resultCellRenderer} />
+        <Column name="Result" cellRenderer={resultCellRenderer} />
+      </Table2>
     </div>
   );
 };
