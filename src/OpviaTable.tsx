@@ -4,6 +4,13 @@ import { useState } from 'react';
 import { Column, Cell, EditableCell2, Table2 } from '@blueprintjs/table';
 import { betterTableData } from './data/dummyData';
 import { CalculateAggregateDialog } from './CalculateAggregateDialog';
+import { AddColumnDialog } from './AddColumnDialog';
+
+type ColumnDefinition = {
+  columnName: string;
+  columnType: string;
+  columnId: string;
+};
 
 const columns = [
   { columnName: 'Time', columnType: 'time', columnId: 'time' },
@@ -12,13 +19,16 @@ const columns = [
 ];
 
 const OpviaTable: React.FC = () => {
-  // const [aggregates, setAggregates] = useState<string[]>([]);
   const [aggregateResults, setAggregateResults] = useState<
     Array<{ function: string; column: string; result: number }>
   >([]);
+  const [extraColumns, setExtraColumns] = useState<Array<ColumnDefinition>>([]);
 
   const cellRenderer = (rowIndex: number, columnIndex: number) => {
-    const columnName = columns[columnIndex].columnId;
+    if (columnIndex >= columns.length) {
+      return <EditableCell2 value={'TODO'} />;
+    }
+    const columnName = columns[columnIndex]?.columnId;
     const value = betterTableData[columnName][rowIndex];
     return <EditableCell2 value={String(value)} />;
   };
@@ -33,7 +43,7 @@ const OpviaTable: React.FC = () => {
     return <Cell>-</Cell>;
   };
 
-  const cols = columns.map((column) => (
+  const cols = [...columns, ...extraColumns].map((column) => (
     <Column
       key={`${column.columnId}`}
       cellRenderer={cellRenderer}
@@ -62,8 +72,17 @@ const OpviaTable: React.FC = () => {
     setAggregateResults([...aggregateResults, newResult]);
   };
 
+  const addColumn = (columnName: string, func: string) => {
+    const newColumn = {
+      columnName: columnName,
+      columnType: 'data',
+      columnId: columnName,
+    };
+    setExtraColumns([...extraColumns, newColumn]);
+  };
   return (
     <div>
+      <AddColumnDialog addColumn={addColumn} />
       <Table2 defaultRowHeight={30} numRows={8}>
         {cols}
       </Table2>
