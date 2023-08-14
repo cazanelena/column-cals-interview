@@ -63,8 +63,6 @@ export function CalculateAggregateDialog(props: Props) {
           onChange={(e) => setSelectedColumn(e.currentTarget.value)}
           selectedValue={selectedColumn}
         >
-          {/* <Radio label="Cell Density" value="cell-density" />
-          <Radio label="Volume" value="volume" /> */}
           {columnOptions.map((columnName) => (
             <Radio key={columnName} label={columnName} value={columnName} />
           ))}
