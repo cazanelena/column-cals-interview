@@ -1,3 +1,18 @@
+# Task 1 
+## Calculation columns
+
+# Task 2
+## Column Aggregations
+
+- For implementing column aggregations, I found it easier to utilize the Dialog Blueprint Component.
+- Users can select a column and an operation (sum, average, max, min), and the result will be displayed in a second Table2.
+
+### Ran out of time
+
+- After refreshing the page, the data gets erased. In the future, I intend to save it to local storage.
+- Error checking: Notify the user if the correct format is not inputted or if input data is missing.
+
+
 # Opvia Take-home Product Challenge
 
 Congratulations on being selected for the next stage of our interview process!
