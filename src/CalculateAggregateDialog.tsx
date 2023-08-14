@@ -1,7 +1,8 @@
-// import * as React from 'react';
 import { useState } from 'react';
 
 import { Button, Dialog, Radio, RadioGroup } from '@blueprintjs/core';
+
+import { betterTableData } from './data/dummyData';
 
 type Props = {
   onCalculate: (func: string, column: string) => void;
@@ -14,6 +15,10 @@ export function CalculateAggregateDialog(props: Props) {
     string | undefined
   >();
   const [selectedColumn, setSelectedColumn] = useState<string | undefined>();
+
+  const columnOptions = Object.keys(betterTableData).filter(
+    (columnName) => columnName !== 'time',
+  );
 
   const onCalculate = () => {
     const func = selectedFunction;
@@ -39,7 +44,7 @@ export function CalculateAggregateDialog(props: Props) {
         Add aggregate
       </Button>
       <Dialog
-        title="Informational dialog"
+        title="Column Aggregations Dialog"
         onClose={() => setAggregateDialogOpen(false)}
         isOpen={isAggregateDialogOpen}
       >
@@ -58,8 +63,11 @@ export function CalculateAggregateDialog(props: Props) {
           onChange={(e) => setSelectedColumn(e.currentTarget.value)}
           selectedValue={selectedColumn}
         >
-          <Radio label="Cell Density" value="cell-density" />
-          <Radio label="Volume" value="volume" />
+          {/* <Radio label="Cell Density" value="cell-density" />
+          <Radio label="Volume" value="volume" /> */}
+          {columnOptions.map((columnName) => (
+            <Radio key={columnName} label={columnName} value={columnName} />
+          ))}
         </RadioGroup>
         <Button onClick={onCalculate}>Calculate</Button>
       </Dialog>

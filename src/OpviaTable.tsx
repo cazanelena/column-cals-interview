@@ -7,7 +7,7 @@ import { CalculateAggregateDialog } from './CalculateAggregateDialog';
 import { AddColumnDialog } from './AddColumnDialog';
 
 type ColumnDefinition = {
-  columnName: string;
+  columnName: string | number;
   columnType: string;
   columnId: string;
 };
@@ -25,12 +25,19 @@ const OpviaTable: React.FC = () => {
   const [extraColumns, setExtraColumns] = useState<Array<ColumnDefinition>>([]);
 
   const cellRenderer = (rowIndex: number, columnIndex: number) => {
-    if (columnIndex >= columns.length) {
-      return <EditableCell2 value={'TODO'} />;
+    if (columnIndex >= columns.length + extraColumns.length) {
+      return <EditableCell2 value={'N/A'} />;
     }
-    const columnName = columns[columnIndex]?.columnId;
-    const value = betterTableData[columnName][rowIndex];
-    return <EditableCell2 value={String(value)} />;
+
+    const allColumns = [...columns, ...extraColumns];
+    const columnName = allColumns[columnIndex]?.columnId;
+
+    if (betterTableData[columnName]) {
+      const value = betterTableData[columnName][rowIndex];
+      return <EditableCell2 value={String(value)} />;
+    }
+
+    return <EditableCell2 value={'N/A'} />;
   };
 
   const resultCellRenderer = (rowIndex: number, columnIndex: number) => {
@@ -72,14 +79,73 @@ const OpviaTable: React.FC = () => {
     setAggregateResults([...aggregateResults, newResult]);
   };
 
-  const addColumn = (columnName: string, func: string) => {
+  const addColumn = (columnName: string, funcDeclaration: string) => {
     const newColumn = {
       columnName: columnName,
       columnType: 'data',
       columnId: columnName,
     };
     setExtraColumns([...extraColumns, newColumn]);
+
+    const operatorMatch = funcDeclaration.split(' ');
+
+    if (operatorMatch.length === 3) {
+      // Make sure we have three parts (operand, operator, operand)
+      const operator = operatorMatch[1];
+      console.log('Operator:', operator);
+      console.log('First Input Data:', betterTableData[operatorMatch[0]]);
+      console.log('Second Input Data:', betterTableData[operatorMatch[2]]);
+      betterTableData[newColumn.columnName] = compute(
+        betterTableData[operatorMatch[0]],
+        operator,
+        betterTableData[operatorMatch[2]],
+      );
+    } else {
+      console.log('Invalid Operator');
+    }
   };
+
+  const compute = (
+    leftOperandData: number[],
+    operator: string,
+    rightOperandData: number[],
+  ) => {
+    if (!leftOperandData || !rightOperandData) {
+      return []; // Invalid column data
+    }
+
+    const calculatedData = [];
+
+    for (
+      let i = 0;
+      i < Math.min(leftOperandData.length, rightOperandData.length);
+      i++
+    ) {
+      const leftValue = leftOperandData[i];
+      const rightValue = rightOperandData[i];
+
+      switch (operator) {
+        case '+':
+          calculatedData.push(leftValue + rightValue);
+          break;
+        case '-':
+          calculatedData.push(leftValue - rightValue);
+          break;
+        case '*':
+          calculatedData.push(leftValue * rightValue);
+          break;
+        case '/':
+          calculatedData.push(leftValue / rightValue);
+          break;
+        default:
+          calculatedData.push(NaN); // Invalid operator
+          break;
+      }
+    }
+
+    return calculatedData;
+  };
+
   return (
     <div>
       <AddColumnDialog addColumn={addColumn} />
