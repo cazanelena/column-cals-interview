@@ -6,3 +6,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.bp4-dialog {
+  padding: 30px
+}
+
+.bp4-dialog-header {
+  margin-bottom: 15px;
+}
