@@ -7,6 +7,48 @@
 - For implementing column aggregations, I found it easier to utilize the Dialog Blueprint Component.
 - Users can select a column and an operation (sum, average, max, min), and the result will be displayed in a second Table2.
 
+## Format DummyData table
+
+- I found it somewhat easier to work with the provided dummy data by using a different format. Therefore, I opted to format it as shown below:
+
+```typescript
+export const betterTableData: Record<string, (number | string)[]> = {
+  "time": [
+    '2021-01-01T20:39:26.023Z',
+    '2021-01-02T20:39:26.023Z',
+    '2021-01-03T20:39:26.023Z',
+    '2021-01-04T20:39:26.023Z',
+    '2021-01-05T20:39:26.023Z',
+    '2021-01-06T20:39:26.023Z',
+    '2021-01-07T20:39:26.023Z',
+    '2021-01-08T20:39:26.023Z',
+  ],
+  "cell-density": 
+  [
+    120,
+    100,
+    140,
+    150,
+    166,
+    174,
+    182,
+    194,
+  ],
+  "volume": [
+    990,
+    980,
+    970,
+    960,
+    956,
+    954,
+    955,
+    949,
+  ]
+};
+```
+
+
+
 ### Ran out of time
 
 - After refreshing the page, the data gets erased. In the future, I intend to save it to local storage.
