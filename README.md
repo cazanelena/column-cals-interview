@@ -1,6 +1,13 @@
 # Task 1 
 ## Calculation columns
 
+- The user will have the capability to carry out four distinct types of calculations: addition, subtraction, multiplication, and division.
+- To try this out, you can add:
+**Column name:**
+"foo"
+**Function Declaration:**
+"volume + cell-density" OR "cell-density * volume" (case sensitive, and whitespace before and after the operator)
+
 # Task 2
 ## Column Aggregations
 
@@ -48,12 +55,14 @@ export const betterTableData: Record<string, (number | string)[]> = {
 ```
 
 
+### Deprioritising for a MVP
 
-### Ran out of time
-
-- After refreshing the page, the data gets erased. In the future, I intend to save it to local storage.
 - Error checking: Notify the user if the correct format is not inputted or if input data is missing.
+- Not testing added.
+- Added columns not working when the users will try to perform any calculations. 
+- No styling added.
 
+  
 
 # Opvia Take-home Product Challenge
 
